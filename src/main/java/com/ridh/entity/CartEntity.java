@@ -20,22 +20,22 @@ public class CartEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long cartId;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "customerId", referencedColumnName = "customerId")
+	@ManyToOne
+	@JoinColumn(name = "customer_id", referencedColumnName = "customerId")
 	private CustomerEntity customer;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "productId", referencedColumnName = "productId")
+	@ManyToOne
+	@JoinColumn(name = "product_id", referencedColumnName = "productId")
 	private ProductEntity product;
-	
+
 	private Long quantity;
 	private double totalPrice;
-	
+	private String status;
+
 	@CreationTimestamp
 	@Column(name = "create_on", updatable = false)
 	private LocalDateTime createdOn;
-	
+
 	@UpdateTimestamp
 	@Column(name = "update_on", insertable = false)
 	private LocalDateTime updatedOn;

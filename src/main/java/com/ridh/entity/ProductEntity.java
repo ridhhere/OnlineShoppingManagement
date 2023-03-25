@@ -18,24 +18,24 @@ import lombok.*;
 @NoArgsConstructor
 public class ProductEntity {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "productId")
-	private Long productId;
-	private String productName;
-	private String description;
-	private double price;
-	private String imageUrl;
-	private String category;
-	private long availableQuantity;
-	
-	@CreationTimestamp
-	@Column(name = "create_on", updatable = false)
-	private LocalDateTime createdOn;
-	
-	@UpdateTimestamp
-	@Column(name = "update_on", insertable = false)
-	private LocalDateTime updatedOn;
-	
-	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private List<CartEntity> carts = new ArrayList<>();
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long productId;
+
+    private String productName;
+    private String description;
+    private double price;
+    private String imageUrl;
+    private String category;
+    private Long availableQuantity;
+
+    @OneToMany(mappedBy = "product")
+    private List<CartEntity> carts;
+
+    @CreationTimestamp
+    @Column(name = "create_on", updatable = false)
+    private LocalDateTime createdOn;
+
+    @UpdateTimestamp
+    @Column(name = "update_on", insertable = false)
+    private LocalDateTime updatedOn;
 }

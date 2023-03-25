@@ -18,28 +18,26 @@ import lombok.*;
 @NoArgsConstructor
 public class CustomerEntity {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "customerId")
-	private Long customerId;
-	private String firstName;
-	private String lastName;
-	private String emailAddress;
-	private String phoneNumber;
-	private String shippingAddress;
-	private String billingAddress;
-	private String paymentInformation;
-	
-	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-    private List<CartEntity> carts = new ArrayList<>();
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long customerId;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-    private List<CheckoutEntity> checkouts = new ArrayList<>();
+    private String firstName;
+    private String lastName;
+    private String emailAddress;
+    private String phoneNumber;
+    private String shippingAddress;
+    private String billingAddress;
+    private String paymentInformation;
 
-	@CreationTimestamp
-	@Column(name = "create_on", updatable = false)
-	private LocalDateTime createdOn;
-	
-	@UpdateTimestamp
-	@Column(name = "update_on", insertable = false)
-	private LocalDateTime updatedOn;
+    @OneToMany(mappedBy = "customer")
+    private List<CartEntity> carts;
+
+
+    @CreationTimestamp
+    @Column(name = "create_on", updatable = false)
+    private LocalDateTime createdOn;
+
+    @UpdateTimestamp
+    @Column(name = "update_on", insertable = false)
+    private LocalDateTime updatedOn;
 }

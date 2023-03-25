@@ -15,7 +15,7 @@ public class ProductModel {
     private double price;
     private String imageUrl;
     private String category;
-    private int availableQuantity;
+    private Long availableQuantity;
 	private LocalDateTime createdOn;
 	private LocalDateTime updatedOn;
 }

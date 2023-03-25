@@ -1,7 +1,10 @@
 package com.ridh.service.impl;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,15 +17,17 @@ import com.ridh.service.ProductService;
 
 @Service
 public class ProductServiceImpl implements ProductService {
+	ModelMapper modelMapper = new ModelMapper();
+
 	@Autowired
 	private ProductRepo daoImpl;
 
 	@Override
 	public ProductModel createProduct(ProductModel productModel) {
 		// TODO Auto-generated method stub
-		ProductEntity customerEntity = new ProductEntity();
-		BeanUtils.copyProperties(productModel, customerEntity);
-		ProductEntity saveEntity = daoImpl.save(customerEntity);
+		ProductEntity productEntity = new ProductEntity();
+		BeanUtils.copyProperties(productModel, productEntity);
+		ProductEntity saveEntity = daoImpl.save(productEntity);
 		ProductModel newCustomerModel = new ProductModel();
 		BeanUtils.copyProperties(saveEntity, newCustomerModel);
 		return newCustomerModel;
@@ -51,7 +56,8 @@ public class ProductServiceImpl implements ProductService {
 			BeanUtils.copyProperties(customerModel, customerEntity);
 			ProductEntity saveEntity = daoImpl.save(customerEntity);
 			ProductModel newCustomerModel = new ProductModel();
-			BeanUtils.copyProperties(saveEntity, newCustomerModel);
+			modelMapper.map(saveEntity, newCustomerModel);
+//			BeanUtils.copyProperties(saveEntity, newCustomerModel);
 			return newCustomerModel;
 		} else {
 			throw new RecordNotFoundException("Given Record doesn't Exist");
@@ -72,4 +78,15 @@ public class ProductServiceImpl implements ProductService {
 		return msg;
 
 	}
+	
+	@Override
+	public List<ProductModel> getProducts() throws RecordNotFoundException {
+        List<ProductEntity> products = daoImpl.findAll();
+        if (products.isEmpty()) {
+            throw new RecordNotFoundException("No products found");
+        }
+        return products.stream()
+                .map(product -> modelMapper.map(product, ProductModel.class))
+                .collect(Collectors.toList());
+    }
 }
