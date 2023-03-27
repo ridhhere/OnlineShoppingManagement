@@ -45,17 +45,43 @@ public class CustomerServiceImpl implements CustomerService {
 	public CustomerModel updateCustomer(Long id, CustomerModel customerModel) throws RecordNotFoundException {
 		// TODO Auto-generated method stub
 		Optional<CustomerEntity> findById = daoImpl.findById(id);
-		if (findById.isPresent()) {
-			CustomerEntity customerEntity = findById.get();
-			customerModel.setCustomerId(id);
-			BeanUtils.copyProperties(customerModel, customerEntity);
-			CustomerEntity saveEntity = daoImpl.save(customerEntity);
-			CustomerModel newCustomerModel = new CustomerModel();
-			BeanUtils.copyProperties(saveEntity, newCustomerModel);
-			return newCustomerModel;
-		} else {
-			throw new RecordNotFoundException("Given Record doesn't Exist");
-		}
+	    if (findById.isPresent()) {
+	        CustomerEntity customerEntity = findById.get();
+	        
+	        // Check which fields are present in the customerModel argument and update only those fields in the entity
+	        if (customerModel.getFirstName() != null) {
+	            customerEntity.setFirstName(customerModel.getFirstName());
+	        }
+	        if (customerModel.getLastName() != null) {
+	            customerEntity.setLastName(customerModel.getLastName());
+	        }
+	        if (customerModel.getEmailAddress() != null) {
+	            customerEntity.setEmailAddress(customerModel.getEmailAddress());
+	        }
+	        if (customerModel.getPhoneNumber() != null) {
+	            customerEntity.setPhoneNumber(customerModel.getPhoneNumber());
+	        }
+	        if (customerModel.getShippingAddress() != null) {
+	            customerEntity.setShippingAddress(customerModel.getShippingAddress());
+	        }
+	        if (customerModel.getBillingAddress() != null) {
+	            customerEntity.setBillingAddress(customerModel.getBillingAddress());
+	        }
+	        if (customerModel.getPaymentInformation() != null) {
+	            customerEntity.setPaymentInformation(customerModel.getPaymentInformation());
+	        }
+	        
+	        // Save the updated entity using the DAO
+	        CustomerEntity savedEntity = daoImpl.save(customerEntity);
+	        
+	        // Create a new CustomerModel object and copy the properties of the saved entity
+	        CustomerModel newCustomerModel = new CustomerModel();
+	        BeanUtils.copyProperties(savedEntity, newCustomerModel);
+	        
+	        return newCustomerModel;
+	    } else {
+	        throw new RecordNotFoundException("Given Record doesn't Exist");
+	    }
 	}
 
 	@Override

@@ -12,6 +12,7 @@ import com.ridh.entity.CartEntity;
 import com.ridh.entity.CheckoutEntity;
 import com.ridh.entity.CustomerEntity;
 import com.ridh.entity.ProductEntity;
+import com.ridh.enums.StatusEnum;
 import com.ridh.exception.RecordNotFoundException;
 import com.ridh.model.CheckoutModel;
 import com.ridh.repo.CartRepo;
@@ -53,7 +54,7 @@ public class CheckoutServiceImpl implements CheckoutService {
 	        product.setAvailableQuantity(availableQuantity - quantity);
 	        productsToUpdate.add(product);
 	        totalPrice += cartItem.getTotalPrice();
-	        cartItem.setStatus("ORDERED");
+	        cartItem.setStatus(StatusEnum.ORDERED);
 	        cartRepo.save(cartItem);
 	    }
 
@@ -63,7 +64,7 @@ public class CheckoutServiceImpl implements CheckoutService {
 	    checkoutItem.setShippingAddress(customer.getShippingAddress());
 	    checkoutItem.setBillingAddress(customer.getBillingAddress());
 	    checkoutItem.setTotalPrice(totalPrice);
-	    checkoutItem.setOrderStatus("ORDERED");
+	    checkoutItem.setOrderStatus(StatusEnum.ORDERED);
 	    checkoutRepo.save(checkoutItem);
 
 	    for (ProductEntity product : productsToUpdate) {

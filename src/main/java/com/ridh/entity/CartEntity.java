@@ -8,6 +8,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.ridh.enums.StatusEnum;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,7 +32,7 @@ public class CartEntity {
 
 	private Long quantity;
 	private double totalPrice;
-	private String status;
+	private StatusEnum status;
 
 	@CreationTimestamp
 	@Column(name = "create_on", updatable = false)

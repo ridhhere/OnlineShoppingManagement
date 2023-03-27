@@ -6,6 +6,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.ridh.enums.StatusEnum;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,7 +29,7 @@ public class CheckoutEntity {
     private String shippingAddress;
     private String billingAddress;
     private double totalPrice;
-    private String orderStatus;
+    private StatusEnum orderStatus;
 
     @CreationTimestamp
     @Column(name = "create_on", updatable = false)

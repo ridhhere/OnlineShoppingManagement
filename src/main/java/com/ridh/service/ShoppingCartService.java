@@ -13,6 +13,7 @@ import com.ridh.DTO.ProductDTO;
 import com.ridh.entity.CartEntity;
 import com.ridh.entity.CustomerEntity;
 import com.ridh.entity.ProductEntity;
+import com.ridh.enums.StatusEnum;
 import com.ridh.exception.RecordNotFoundException;
 import com.ridh.repo.CartRepo;
 import com.ridh.repo.CustomerRepo;
@@ -43,6 +44,7 @@ public class ShoppingCartService {
 	    cartItem.setCustomer(customer);
 	    cartItem.setProduct(product);
 	    cartItem.setQuantity(quantity);
+	    cartItem.setStatus(StatusEnum.IN_CART);
 	    cartItem.setTotalPrice(product.getPrice() * quantity);
 	    cartRepo.save(cartItem);
 
