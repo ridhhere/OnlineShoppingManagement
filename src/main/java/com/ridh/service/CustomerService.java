@@ -11,4 +11,6 @@ public interface CustomerService {
     public CustomerModel updateCustomer(Long id,CustomerModel customerModel) throws RecordNotFoundException;
     
     public String deleteCustomer(Long id) throws RecordNotFoundException;
+
+    public void updateStatusIfInactive();
 }

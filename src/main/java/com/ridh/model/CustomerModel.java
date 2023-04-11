@@ -19,4 +19,5 @@ public class CustomerModel {
 	private String paymentInformation;
 	private LocalDateTime createdOn;
 	private LocalDateTime updatedOn;
+	private String status;
 }

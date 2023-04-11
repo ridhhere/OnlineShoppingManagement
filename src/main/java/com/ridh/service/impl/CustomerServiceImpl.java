@@ -1,6 +1,10 @@
 package com.ridh.service.impl;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +16,9 @@ import com.ridh.model.CustomerModel;
 import com.ridh.repo.CustomerRepo;
 import com.ridh.service.CustomerService;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class CustomerServiceImpl implements CustomerService {
 	@Autowired
@@ -30,12 +37,17 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public CustomerModel getCustomerById(Long id) throws RecordNotFoundException {
+		log.info("CustomerServiceImpl:getCustomerById execution started !!");
 		Optional<CustomerEntity> findById = daoImpl.findById(id);
 		if (findById.isPresent()) {
+			log.info("Customer found!!");
 			CustomerEntity customerEntity = findById.get();
 			CustomerModel newCustomerModel = new CustomerModel();
 			BeanUtils.copyProperties(customerEntity, newCustomerModel);
+			log.info("Copy complete!!");
+			log.info("CustomerServiceImpl:getCustomerById execution ended !!");
 			return newCustomerModel;
+			
 		} else {
 			throw new RecordNotFoundException("Given Record doesn't Exist");
 		}
@@ -97,6 +109,27 @@ public class CustomerServiceImpl implements CustomerService {
 		}
 		return msg;
 
+	}
+
+	@Override
+	public void updateStatusIfInactive() {
+		List<CustomerEntity> findAllCustomer = daoImpl.findAll();
+		LocalDateTime now = LocalDateTime.now(); // current timestamp
+		List<CustomerEntity> inactiveCustomers = findAllCustomer.stream()
+				.filter(customer -> customer.getStatus().equals("Inactive"))
+				.filter(customer -> Duration.between(customer.getCreatedOn(), now).toHours() > 24)
+				.collect(Collectors.toList()); // collect all matching CustomerEntity objects into a list
+		if (inactiveCustomers.isEmpty()) {
+			// add a log statement if no CustomerEntity objects are found with a status of "Inactive"
+			log.info("CustomerService:updateStatusIfInactive: No inactive customers found");
+			return;
+		}
+		for (CustomerEntity inactiveCustomer : inactiveCustomers) {
+			inactiveCustomer.setStatus("Active");
+			daoImpl.save(inactiveCustomer);
+			// add a log statement for each CustomerEntity object that is updated
+			log.info("CustomerService:updateStatusIfInactive: Customer status updated: {}", inactiveCustomer.getFirstName());
+		}
 	}
 
 }

@@ -42,4 +42,6 @@ public class CustomerEntity {
     @UpdateTimestamp
     @Column(name = "update_on", insertable = false)
     private LocalDateTime updatedOn;
+    @Column(name = "status", nullable = false)
+    private String status;
 }

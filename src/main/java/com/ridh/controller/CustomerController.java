@@ -1,5 +1,7 @@
 package com.ridh.controller;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,9 +16,14 @@ import com.ridh.exception.RecordNotFoundException;
 import com.ridh.model.CustomerModel;
 import com.ridh.service.impl.CustomerServiceImpl;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestController
 @RequestMapping("/customers")
 public class CustomerController {
+	  private static final Logger logger = LogManager.getLogger(CustomerController.class);
+
     @Autowired
     private CustomerServiceImpl customerServiceImpl;
     
@@ -27,7 +34,8 @@ public class CustomerController {
     
     @GetMapping("/get/{id}")
     public CustomerModel getCustomerById(@PathVariable long id) throws RecordNotFoundException {
-        return customerServiceImpl.getCustomerById(id);
+        logger.info("CustomerController:getCustomerById execution started !!");
+    	return customerServiceImpl.getCustomerById(id);
     }
     
     @PutMapping("/update/{id}")
