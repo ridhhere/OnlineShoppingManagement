@@ -3,7 +3,6 @@ package com.ridh.entity;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.ridh.enums.StatusEnum;
@@ -16,10 +15,10 @@ import lombok.*;
 @Table(name = "CHECKOUT")
 @AllArgsConstructor
 @NoArgsConstructor
-public class CheckoutEntity {
+public class OrderEntity {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long checkoutId;
+    private Long orderId;
 
     @ManyToOne
     @JoinColumn(name = "cart_id", referencedColumnName = "cartId")
@@ -29,6 +28,8 @@ public class CheckoutEntity {
     private String shippingAddress;
     private String billingAddress;
     private double totalPrice;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "order_status", nullable = false)
     private StatusEnum orderStatus;
 
     @CreationTimestamp

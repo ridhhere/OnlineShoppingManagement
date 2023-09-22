@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.ridh.enums.StatusEnum;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,17 +23,23 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class CustomerServiceImpl implements CustomerService {
+	ModelMapper modelMapper = new ModelMapper();
+
 	@Autowired
 	private CustomerRepo daoImpl;
 
 	@Override
 	public CustomerModel createCustomer(CustomerModel customerModel) {
 		// TODO Auto-generated method stub
+		log.info("CustomerServiceImpl:createCustomer execution started !!");
 		CustomerEntity customerEntity = new CustomerEntity();
 		BeanUtils.copyProperties(customerModel, customerEntity);
+		customerEntity.setStatus(StatusEnum.INACTIVE);
 		CustomerEntity saveEntity = daoImpl.save(customerEntity);
 		CustomerModel newCustomerModel = new CustomerModel();
 		BeanUtils.copyProperties(saveEntity, newCustomerModel);
+		log.info("User Created Successfully !!");
+		log.info("CustomerServiceImpl:createCustomer execution ended !!");
 		return newCustomerModel;
 	}
 
@@ -39,7 +47,9 @@ public class CustomerServiceImpl implements CustomerService {
 	public CustomerModel getCustomerById(Long id) throws RecordNotFoundException {
 		log.info("CustomerServiceImpl:getCustomerById execution started !!");
 		Optional<CustomerEntity> findById = daoImpl.findById(id);
-		if (findById.isPresent()) {
+		if (findById.isEmpty() || findById.stream().anyMatch(customer -> customer.getStatus().equals(StatusEnum.DELETED))) {
+			throw new RecordNotFoundException("Given Record doesn't Exist");
+		} else {
 			log.info("Customer found!!");
 			CustomerEntity customerEntity = findById.get();
 			CustomerModel newCustomerModel = new CustomerModel();
@@ -47,15 +57,13 @@ public class CustomerServiceImpl implements CustomerService {
 			log.info("Copy complete!!");
 			log.info("CustomerServiceImpl:getCustomerById execution ended !!");
 			return newCustomerModel;
-			
-		} else {
-			throw new RecordNotFoundException("Given Record doesn't Exist");
 		}
 	}
 
 	@Override
 	public CustomerModel updateCustomer(Long id, CustomerModel customerModel) throws RecordNotFoundException {
 		// TODO Auto-generated method stub
+		log.info("CustomerServiceImpl:updateCustomer execution started !!");
 		Optional<CustomerEntity> findById = daoImpl.findById(id);
 	    if (findById.isPresent()) {
 	        CustomerEntity customerEntity = findById.get();
@@ -89,9 +97,11 @@ public class CustomerServiceImpl implements CustomerService {
 	        // Create a new CustomerModel object and copy the properties of the saved entity
 	        CustomerModel newCustomerModel = new CustomerModel();
 	        BeanUtils.copyProperties(savedEntity, newCustomerModel);
-	        
-	        return newCustomerModel;
-	    } else {
+			log.info("Customer Update Sucessfully !!");
+			log.info("CustomerServiceImpl:updateCustomer Execution Ended !!");
+			return newCustomerModel;
+
+		} else {
 	        throw new RecordNotFoundException("Given Record doesn't Exist");
 	    }
 	}
@@ -99,16 +109,23 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public String deleteCustomer(Long id) throws RecordNotFoundException {
 		// TODO Auto-generated method stub
+		log.info("CustomerServiceImpl:deleteCustomer Execution started !!");
 		Optional<CustomerEntity> findById = daoImpl.findById(id);
-		String msg="";
+		LocalDateTime now = LocalDateTime.now(); // current timestamp
+		String msg;
 		if (findById.isPresent()) {
-			daoImpl.deleteById(id);
+			CustomerEntity customerEntity = findById.get();
+			customerEntity.setStatus(StatusEnum.DELETED);
+			customerEntity.setUpdatedOn(now);
+			CustomerEntity saveEntity = daoImpl.save(customerEntity);
 			msg="Deleted Succesfully!!!";
+			log.info("Customer Deleted !!");
+			log.info("CustomerServiceImpl:deleteCustomer Execution Ended !!");
+
 		} else {
 			throw new RecordNotFoundException("Given Record doesn't Exist");
 		}
 		return msg;
-
 	}
 
 	@Override
@@ -116,7 +133,7 @@ public class CustomerServiceImpl implements CustomerService {
 		List<CustomerEntity> findAllCustomer = daoImpl.findAll();
 		LocalDateTime now = LocalDateTime.now(); // current timestamp
 		List<CustomerEntity> inactiveCustomers = findAllCustomer.stream()
-				.filter(customer -> customer.getStatus().equals("Inactive"))
+				.filter(customer -> customer.getStatus().equals(StatusEnum.INACTIVE))
 				.filter(customer -> Duration.between(customer.getCreatedOn(), now).toHours() > 24)
 				.collect(Collectors.toList()); // collect all matching CustomerEntity objects into a list
 		if (inactiveCustomers.isEmpty()) {
@@ -125,11 +142,24 @@ public class CustomerServiceImpl implements CustomerService {
 			return;
 		}
 		for (CustomerEntity inactiveCustomer : inactiveCustomers) {
-			inactiveCustomer.setStatus("Active");
+			inactiveCustomer.setStatus(StatusEnum.ACTIVE);
 			daoImpl.save(inactiveCustomer);
 			// add a log statement for each CustomerEntity object that is updated
 			log.info("CustomerService:updateStatusIfInactive: Customer status updated: {}", inactiveCustomer.getFirstName());
 		}
+	}
+
+	@Override
+	public List<CustomerModel> getAllCustomer() throws RecordNotFoundException {
+		log.info("CustomerServiceImpl:getAllCustomer Execution started !!");
+		List<CustomerEntity> customers = daoImpl.findAll();
+		if (customers.isEmpty()) {
+			throw new RecordNotFoundException("No Customer found");
+		}
+		return customers.stream()
+				.filter(customer -> !customer.getStatus().equals(StatusEnum.DELETED))
+				.map(customer -> modelMapper.map(customer, CustomerModel.class))
+				.collect(Collectors.toList());
 	}
 
 }

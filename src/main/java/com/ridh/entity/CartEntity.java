@@ -32,6 +32,8 @@ public class CartEntity {
 
 	private Long quantity;
 	private double totalPrice;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status", nullable = false)
 	private StatusEnum status;
 
 	@CreationTimestamp

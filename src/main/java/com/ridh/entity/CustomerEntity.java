@@ -1,11 +1,10 @@
 package com.ridh.entity;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
+import com.ridh.enums.StatusEnum;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.*;
@@ -42,6 +41,7 @@ public class CustomerEntity {
     @UpdateTimestamp
     @Column(name = "update_on", insertable = false)
     private LocalDateTime updatedOn;
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private String status;
+    private StatusEnum status;
 }

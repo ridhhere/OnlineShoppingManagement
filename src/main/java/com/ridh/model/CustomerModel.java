@@ -1,6 +1,7 @@
 package com.ridh.model;
 import java.time.LocalDateTime;
 
+import com.ridh.enums.StatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,5 +20,5 @@ public class CustomerModel {
 	private String paymentInformation;
 	private LocalDateTime createdOn;
 	private LocalDateTime updatedOn;
-	private String status;
+	private StatusEnum status;
 }

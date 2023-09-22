@@ -18,6 +18,8 @@ import com.ridh.service.impl.CustomerServiceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/customers")
@@ -47,5 +49,11 @@ public class CustomerController {
     @DeleteMapping("delete/{id}")
     public String deleteCustomer(@PathVariable long id) throws RecordNotFoundException {
     	return customerServiceImpl.deleteCustomer(id);
+    }
+
+    @GetMapping("/get")
+    public List<CustomerModel> getAllCustomer() throws RecordNotFoundException {
+        logger.info("CustomerController:getAllCustomer execution started !!");
+        return customerServiceImpl.getAllCustomer();
     }
 }

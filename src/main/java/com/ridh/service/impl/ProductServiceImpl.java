@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.ridh.entity.CustomerEntity;
+import com.ridh.model.CustomerModel;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,17 +49,38 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public ProductModel updateProduct(Long id, ProductModel customerModel) throws RecordNotFoundException {
+	public ProductModel updateProduct(Long id, ProductModel productModel) throws RecordNotFoundException {
 		// TODO Auto-generated method stub
 		Optional<ProductEntity> findById = daoImpl.findById(id);
 		if (findById.isPresent()) {
 			ProductEntity customerEntity = findById.get();
-			customerModel.setProductId(id);
-			BeanUtils.copyProperties(customerModel, customerEntity);
-			ProductEntity saveEntity = daoImpl.save(customerEntity);
+
+			// Check which fields are present in the customerModel argument and update only those fields in the entity
+			if (productModel.getProductName() != null) {
+				customerEntity.setProductName(productModel.getProductName());
+			}
+			if (productModel.getDescription() != null) {
+				customerEntity.setDescription(productModel.getDescription());
+			}
+			if (productModel.getPrice() != 0.0) {
+				customerEntity.setPrice(productModel.getPrice());
+			}
+			if (productModel.getImageUrl() != null) {
+				customerEntity.setImageUrl(productModel.getImageUrl());
+			}
+			if (productModel.getCategory() != null) {
+				customerEntity.setCategory(productModel.getCategory());
+			}
+			if (productModel.getAvailableQuantity() != null) {
+				customerEntity.setAvailableQuantity(productModel.getAvailableQuantity());
+			}
+
+			// Save the updated entity using the DAO
+			ProductEntity savedEntity = daoImpl.save(customerEntity);
+
+			// Create a new CustomerModel object and copy the properties of the saved entity
 			ProductModel newCustomerModel = new ProductModel();
-			modelMapper.map(saveEntity, newCustomerModel);
-//			BeanUtils.copyProperties(saveEntity, newCustomerModel);
+			BeanUtils.copyProperties(savedEntity, newCustomerModel);
 			return newCustomerModel;
 		} else {
 			throw new RecordNotFoundException("Given Record doesn't Exist");

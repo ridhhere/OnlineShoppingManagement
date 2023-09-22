@@ -8,7 +8,7 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CheckoutModel {
+public class OrderModel {
 	private Long checkoutId;
 	private Long customerId;
 	private Long cartId;

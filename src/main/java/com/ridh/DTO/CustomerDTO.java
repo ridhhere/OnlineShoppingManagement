@@ -3,6 +3,7 @@ package com.ridh.DTO;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.ridh.enums.StatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ public class CustomerDTO {
     private String paymentInformation;
     private LocalDateTime createdOn;
     private LocalDateTime updatedOn;
+    private StatusEnum status;
     private List<CartDTO> cartItems;
 //    private List<CheckoutDTO> checkouts;
 //    private List<CartItemDTO> cartItems;

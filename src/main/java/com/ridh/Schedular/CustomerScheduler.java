@@ -16,8 +16,8 @@ public class CustomerScheduler {
 
     @Scheduled(fixedRate = 1000000)
     public void updateCustomerStatus(){
-        log.info("CustomerScheduler:updateCustomerStatus Started Successfully!! at " + LocalDateTime.now());
+        log.info("CustomerScheduler:updateCustomerStatus Scheduler Started Successfully!! at " + LocalDateTime.now());
         customerService.updateStatusIfInactive();
-        log.info("CustomerScheduler:updateCustomerStatus Ended Successfully!! at " +  LocalDateTime.now());
+        log.info("CustomerScheduler:updateCustomerStatus Scheduler Ended Successfully!! at " +  LocalDateTime.now());
     }
 }

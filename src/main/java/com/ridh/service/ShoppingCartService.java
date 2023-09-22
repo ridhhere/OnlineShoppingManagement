@@ -2,6 +2,7 @@ package com.ridh.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,51 +52,23 @@ public class ShoppingCartService {
 	    // Convert the cart item entity to a DTO and return it
 	    return modelMapper.map(cartItem, CartDTO.class);
 	}
-	
 
-	
-	
+
+
+
 	public String removeItem(Long cartItemId) throws RecordNotFoundException {
         // Retrieve the cart item entity
         CartEntity cartItem = cartRepo.findById(cartItemId)
                 .orElseThrow(() -> new RecordNotFoundException("Cart item with id " + cartItemId + " not found"));
-
-        // Remove the cart item
-        cartRepo.delete(cartItem);
-        return "Deleted Succesfully!!";
+		// Check if the cart item's status is IN_CART
+		if (cartItem.getStatus() == StatusEnum.IN_CART) {
+			// Remove the cart item if the status is IN_CART
+			cartRepo.delete(cartItem);
+			return "Deleted Successfully!!";
+		} else {
+			// Handle the case where the status is not IN_CART
+			return "Item cannot be deleted because it is not in the IN_CART status.";
+		}
     }
-	
-	public CustomerDTO getCustomer(Long customerId) throws RecordNotFoundException {
-	    // Retrieve the customer entity
-	    CustomerEntity customer = customerRepo.findById(customerId)
-	            .orElseThrow(() -> new RecordNotFoundException("Customer with id " + customerId + " not found"));
-
-	    // Convert customer entity to DTO
-	    CustomerDTO customerDTO = modelMapper.map(customer, CustomerDTO.class);
-
-	    // Retrieve all cart items for the customer and convert them to DTOs
-	    List<CartDTO> cart = new ArrayList<>();
-	    for (CartEntity cartItem : cartRepo.findByCustomer(customer)) {
-	        // Convert cart item entity to DTO
-	        CartDTO cartItemDTO = modelMapper.map(cartItem, CartDTO.class);
-
-	        // Retrieve the product for the cart item and convert it to a DTO
-	        ProductEntity productEntity = cartItem.getProduct();
-	        ProductDTO productDTO = modelMapper.map(productEntity, ProductDTO.class);
-
-	        // Set the product for the cart item DTO
-	        cartItemDTO.setProductDetails(productDTO);
-
-	        // Add the cart item DTO to the list of cart items
-	        cart.add(cartItemDTO);
-	    }
-
-	    // Set the cart items for the customer DTO
-	    customerDTO.setCartItems(cart);
-
-	    return customerDTO;
-	}
-
-
 
 }
